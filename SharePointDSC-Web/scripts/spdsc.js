@@ -1,3 +1,7 @@
+$(document).ready(function () {
+    document.getElementById("filePS1").addEventListener('change', GenerateFiles, false);
+});
+
 function AddServerNode(currentNumberOfServers)
 {
     var nextNode = currentNumberOfServers + 1;
@@ -55,33 +59,23 @@ function Toggle(sectionName, show)
     }
 }
 
-function GenerateFiles()
+function GenerateFiles(evt)
 {
-    var reader = new FileReader();
-    var loc = window.location.pathname;
-    var dir = loc.substring(0, loc.lastIndexOf('/'));
-    var rawFile = new XMLHttpRequest();
-    try {
-        rawFile.open("GET", windows.location.href + "powershell/SharePointDSC.ps1", false);
-        rawFile.onreadystatechange = function () {
-            if (rawFile.readyState === 4) {
-                if (rawFile.status === 200 || rawFile.status === 0) {
-                    var allText = rawFile.responseText;
-                    alert(allText);
-                }
-            }
-        };
+    var f = evt.target.files[0];
+
+    if (f) {
+        var r = new FileReader();
+        r.onload = function (e) {
+            var contents = e.target.result;
+            alert("Got the file.n"
+                + "name: " + f.name + "n"
+                + "type: " + f.type + "n"
+                + "size: " + f.size + " bytesn"
+                + "starts with: " + contents.substr(1, contents.indexOf("n"))
+            );
+        }
+        r.readAsText(f);
+    } else {
+        alert("Failed to load file");
     }
-    catch (err) {
-        rawFile.open("GET", "file://" + dir + "/powershell/SharePointDSC.ps1", false);
-        rawFile.onreadystatechange = function () {
-            if (rawFile.readyState === 4) {
-                if (rawFile.status === 200 || rawFile.status === 0) {
-                    var allText = rawFile.responseText;
-                    alert(allText);
-                }
-            }
-        };
-    }
-    rawFile.send(null);
 }
